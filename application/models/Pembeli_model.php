@@ -3,9 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Pembeli_model extends CI_Model {
 
-    public function login($name)
+    public function login($email)
     {
-        $query = $this->db->get_where('pembeli', array('name' => $name));
+        $query = $this->db->get_where('pembeli', array('email' => $email));
         $result = $query->row();
         return $result;
     }
@@ -33,10 +33,14 @@ class Pembeli_model extends CI_Model {
         $query = $this->db->update('pembeli');
     }
 
-    public function getPenjualRadius($id, $radius)
+    public function getPenjualRadius($id, $radius = 3000)
     {
         $user = $this->getOnePembeli($id);
 
+        if (!$user) 
+            {
+                return [];
+            }
         $user_lat = $user['latitude'];
         $user_lng = $user['longitude'];
 
