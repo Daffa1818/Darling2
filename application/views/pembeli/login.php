@@ -45,7 +45,7 @@
             <div class="icheck-primary">
               <input type="checkbox" id="remember" name="remember">
               <label for="remember">
-                Ingat Saya
+                Jika belum punya akun, silakan <a href="<?php echo site_url('Pembeli/register') ?>">daftar</a>
               </label>
             </div>
           </div>
