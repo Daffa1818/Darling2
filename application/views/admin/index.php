@@ -3,7 +3,7 @@
 			<!-- Brand Logo -->
 			<a href="<?php echo base_url(); ?>" class="brand-link">
 				<img src="<?php echo base_url('assets/dist/img/AdminLTELogo.png'); ?>" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-				<span class="brand-text font-weight-light">AdminLTE 3</span>
+				<span class="brand-text font-weight-light" style="font-size: 16px;">Radar Pedagang Keliling</span>
 			</a>
 
 			<!-- Sidebar -->
@@ -14,13 +14,14 @@
 						<img src="<?php echo base_url('assets/dist/img/user2-160x160.jpg'); ?>" class="img-circle elevation-2" alt="User Image">
 					</div>
 					<div class="info">
-						<a href="#" class="d-block">Alexander Pierce</a>
+						<a href="#" class="d-block">Administrator</a>
 					</div>
 				</div>
+
 				<!-- SidebarSearch Form -->
 				<div class="form-inline">
 					<div class="input-group" data-widget="sidebar-search">
-						<input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+						<input class="form-control form-control-sidebar" type="search" placeholder="Cari menu..." aria-label="Search">
 						<div class="input-group-append">
 							<button class="btn btn-sidebar">
 								<i class="fas fa-search fa-fw"></i>
@@ -32,14 +33,47 @@
 				<!-- Sidebar Menu -->
 				<nav class="mt-2">
 					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-						<!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
 						<li class="nav-item">
-							<a href="<?php echo site_url('dashboard'); ?>" class="nav-link active">
-								<i class="nav-icon fas fa-th"></i>
+							<a href="<?php echo site_url('admin'); ?>" class="nav-link active">
+								<i class="nav-icon fas fa-tachometer-alt"></i>
+								<p>Dashboard</p>
+							</a>
+						</li>
+
+						<li class="nav-header">MANAJEMEN DATA</li>
+						<li class="nav-item">
+							<a href="<?php echo site_url('admin/pedagang'); ?>" class="nav-link">
+								<i class="nav-icon fas fa-store"></i>
 								<p>
-									Dashboard
+									Data Pedagang
+									<span class="right badge badge-warning"></span>
 								</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="<?php echo site_url('admin/pembeli'); ?>" class="nav-link">
+								<i class="nav-icon fas fa-users"></i>
+								<p>Data Pembeli</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="<?php echo site_url('admin/kategori'); ?>" class="nav-link">
+								<i class="nav-icon fas fa-utensils"></i>
+								<p>Kategori Jajanan</p>
+							</a>
+						</li>
+
+						<li class="nav-header">LAINNYA</li>
+						<li class="nav-item">
+							<a href="<?php echo site_url('admin/laporan'); ?>" class="nav-link">
+								<i class="nav-icon fas fa-exclamation-triangle"></i>
+								<p>Laporan & Keluhan</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="<?php echo site_url('admin/pengaturan'); ?>" class="nav-link">
+								<i class="nav-icon fas fa-cog"></i>
+								<p>Pengaturan Sistem</p>
 							</a>
 						</li>
 					</ul>
@@ -71,35 +105,180 @@
 
 			<!-- Main content -->
 			<div class="content">
-				<div class="row">
-					<div class="col-lg-3 col-6">
-						<!-- small box -->
-						<div class="small-box bg-warning">
-							<div class="inner">
-								<h3>44</h3>
+				<div class="container-fluid">
+					<!-- 4 Kotak Statistik -->
+					<div class="row">
+						<div class="col-lg-3 col-6">
+							<!-- small box -->
+							<div class="small-box bg-warning">
+								<div class="inner">
+									<h3>44</h3>
+									<p>Total Mitra Pedagang</p>
+								</div>
+								<div class="icon">
+									<i class="fas fa-store"></i>
+								</div>
+								<a href="<?php echo site_url('admin/pedagang'); ?>" class="small-box-footer">Kelola Pedagang <i class="fas fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
 
-								<p>User Registrations</p>
+						<div class="col-lg-3 col-6">
+							<!-- small box -->
+							<div class="small-box bg-success">
+								<div class="inner">
+									<h3>18</h3>
+									<p>Pedagang Online (GPS Aktif)</p>
+								</div>
+								<div class="icon">
+									<i class="fas fa-satellite-dish"></i>
+								</div>
+								<a href="#peta-pantauan" class="small-box-footer">Pantau di Peta <i class="fas fa-arrow-circle-right"></i></a>
 							</div>
-							<div class="icon">
-								<i class="fas fa-user"></i>
+						</div>
+
+						<div class="col-lg-3 col-6">
+							<!-- small box -->
+							<div class="small-box bg-info">
+								<div class="inner">
+									<h3>152</h3>
+									<p>Pembeli Terdaftar</p>
+								</div>
+								<div class="icon">
+									<i class="fas fa-users"></i>
+								</div>
+								<a href="<?php echo site_url('admin/pembeli'); ?>" class="small-box-footer">Lihat Pembeli <i class="fas fa-arrow-circle-right"></i></a>
 							</div>
-							<a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+						</div>
+
+						<div class="col-lg-3 col-6">
+							<!-- small box -->
+							<div class="small-box bg-danger">
+								<div class="inner">
+									<h3>3</h3>
+									<p>Laporan Keluhan Baru</p>
+								</div>
+								<div class="icon">
+									<i class="fas fa-exclamation-circle"></i>
+								</div>
+								<a href="<?php echo site_url('admin/laporan'); ?>" class="small-box-footer">Periksa Aduan <i class="fas fa-arrow-circle-right"></i></a>
+							</div>
 						</div>
 					</div>
-					<!-- /.info-box -->
-					<!-- /.col -->
-				</div>
+					<!-- /.row -->
+
+					<!-- Peta Pantauan & Statistik Kategori -->
+					<div class="row" id="peta-pantauan">
+						<!-- Peta Live Radar (8 Kolom) -->
+						<div class="col-lg-8">
+							<div class="card bg-gradient-primary">
+								<div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+									<h3 class="card-title">
+										<i class="fas fa-map-marker-alt mr-1"></i>
+										Live Radar Sebaran Pedagang
+									</h3>
+									<!-- card tools -->
+									<div class="card-tools">
+										<span class="badge badge-success mr-2"><i class="fas fa-circle text-xs"></i> 18 Aktif</span>
+										<button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+											<i class="fas fa-minus"></i>
+										</button>
+									</div>
+									<!-- /.card-tools -->
+								</div>
+								<div class="card-body p-0">
+									<iframe
+										src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.6567528007386!2d106.82577201125315!3d-6.43811039352605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69eb1403c4f39f%3A0xc4fae7de4f7e2f4!2sKurma%20Media!5e0!3m2!1sid!2sid!4v1794365537091!5m2!1sid!2sid"
+										class="w-100"
+										height="360"
+										style="border:0; display:block;"
+										allowfullscreen=""
+										loading="lazy">
+									</iframe>
+								</div>
+								<!-- /.card-body-->
+								<div class="card-footer bg-transparent">
+									<small class="text-white"><i class="fas fa-info-circle mr-1"></i> Menampilkan titik koordinat terakhir pedagang yang aktif berkeliling.</small>
+								</div>
+							</div>
+						</div>
+
+						<!-- Statistik Kategori & Wilayah Ramai (4 Kolom) -->
+						<div class="col-lg-4">
+							<!-- Proporsi Kategori Jajanan -->
+							<div class="card card-warning card-outline">
+								<div class="card-header">
+									<h3 class="card-title"><i class="fas fa-chart-pie mr-1"></i> Proporsi Kategori Aktif</h3>
+								</div>
+								<div class="card-body">
+									<div class="progress-group">
+										Makanan Berat (Bakso, Mie Ayam)
+										<span class="float-right"><b>18</b>/44</span>
+										<div class="progress progress-sm">
+											<div class="progress-bar bg-danger" style="width: 45%"></div>
+										</div>
+									</div>
+
+									<div class="progress-group">
+										Minuman Segar (Es Doger, Cendol)
+										<span class="float-right"><b>12</b>/44</span>
+										<div class="progress progress-sm">
+											<div class="progress-bar bg-primary" style="width: 30%"></div>
+										</div>
+									</div>
+
+									<div class="progress-group">
+										Jajanan Ringan (Siomay, Cilok)
+										<span class="float-right"><b>9</b>/44</span>
+										<div class="progress progress-sm">
+											<div class="progress-bar bg-warning" style="width: 20%"></div>
+										</div>
+									</div>
+
+									<div class="progress-group mb-0">
+										Kue & Roti Keliling
+										<span class="float-right"><b>5</b>/44</span>
+										<div class="progress progress-sm">
+											<div class="progress-bar bg-success" style="width: 12%"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Titik Keramaian Pembeli -->
+							<div class="card card-success card-outline">
+								<div class="card-header">
+									<h3 class="card-title"><i class="fas fa-fire mr-1"></i> Titik Keramaian Pembeli</h3>
+								</div>
+								<div class="card-body p-0">
+									<ul class="nav flex-column">
+										<li class="nav-item">
+											<span class="nav-link">
+												1. Area Situ Cilodong
+												<span class="float-right badge bg-success">68 Pencarian</span>
+											</span>
+										</li>
+										<li class="nav-item">
+											<span class="nav-link">
+												2. Boulevard Grand Depok City
+												<span class="float-right badge bg-info">54 Pencarian</span>
+											</span>
+										</li>
+										<li class="nav-item">
+											<span class="nav-link">
+												3. Jl. Raya Kalimulya
+												<span class="float-right badge bg-warning">39 Pencarian</span>
+											</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /.row -->
+				</div><!-- /.container-fluid -->
 			</div>
 			<!-- /.content -->
 		</div>
 		<!-- /.content-wrapper -->
 
 		<!-- Control Sidebar -->
-		<aside class="control-sidebar control-sidebar-dark">
-			<!-- Control sidebar content goes here -->
-			<div class="p-3">
-				<h5>Title</h5>
-				<p>Sidebar content</p>
-			</div>
-		</aside>
-		<!-- /.control-sidebar -->
