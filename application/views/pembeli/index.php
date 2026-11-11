@@ -29,6 +29,68 @@
             gap: 16px;
         }
 
+        /* ===== Top bar: Sync Lokasi (kiri) + profil (kanan) ===== */
+        .topbar {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        /* Tombol hijau: dipakai Pesan Sekarang & Sync Lokasi */
+        .btn-wa,
+        .penjual button {
+            padding: 14px 16px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--wa);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .2s, transform .1s;
+        }
+
+        .btn-wa:hover,
+        .penjual button:hover { background: var(--wa-dark); }
+        .btn-wa:active,
+        .penjual button:active { transform: scale(.98); }
+        .btn-wa:focus-visible,
+        .penjual button:focus-visible { outline: 3px solid #86efac; outline-offset: 2px; }
+
+        /* Ikon profil (tanda sudah login) */
+        .profile {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+            flex-shrink: 0;
+        }
+
+        .profile svg { width: 26px; height: 26px; }
+
+        /* titik hijau = status login */
+        .profile::after {
+            content: "";
+            position: absolute;
+            right: 1px;
+            bottom: 1px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--wa);
+            border: 2px solid var(--bg);
+        }
+
         /* Peta */
         iframe {
             width: 100%;
@@ -87,20 +149,22 @@
             grid-column: 1 / -1;
             margin-top: 16px;
             width: 100%;
-            padding: 14px 16px;
-            border: 0;
-            border-radius: 12px;
-            background: var(--wa);
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background .2s, transform .1s;
         }
 
-        .penjual button:hover { background: var(--wa-dark); }
-        .penjual button:active { transform: scale(.98); }
-        .penjual button:focus-visible { outline: 3px solid #86efac; outline-offset: 2px; }
+        /* Status lokasi & peta hasil sync */
+        #statusLocation {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        #mapContainer {
+            max-width: 600px;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
 
         @media (min-width: 640px) {
             body { padding: 32px 16px; }
@@ -109,6 +173,17 @@
     </style>
 </head>
 <body>
+    <!-- Top bar -->
+    <div class="topbar">
+        <button type="button" id="syncLocation" class="btn-wa">Sync Lokasi</button>
+
+        <div class="profile" title="Kamu sudah login" role="img" aria-label="Sudah login">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z"/>
+            </svg>
+        </div>
+    </div>
+
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3368.7781183091256!2d106.82804601447455!3d-6.4375712590096485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69eb1403c4f39f%3A0xc4fae7de4f7e2f4!2sKurma%20Media!5e0!3m2!1sid!2sid!4v1794296199675!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 
     <div class="penjual">
@@ -124,8 +199,8 @@
     <div id="mapContainer" style="width: 100%; height: 400px">
 
     </div>
-
-    <button type="button" id="syncLocation">Sync Lokasi</button>
+</body>
+</html>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script>
