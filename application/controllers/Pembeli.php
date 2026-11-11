@@ -14,11 +14,11 @@ class Pembeli extends CI_Controller {
 
     public function index()
     {   
-        // if (!$this->session->userdata('logged_in')) {
-        //     redirect('pembeli/login');
-        // }
+        if (!$this->session->userdata('logged_in')) {
+            redirect('pembeli/login');
+        }
         
-        // $id = $this->session->userdata('id');
+        $id = $this->session->userdata('id');
 
         $this->load->view('pembeli/index');
     }
@@ -85,7 +85,7 @@ class Pembeli extends CI_Controller {
         else 
             {   
                 $hashPassword = password_hash($this->input->post('password', TRUE), PASSWORD_DEFAULT);
-                
+
                 $data = [
                     "name" => $this->input->post('name', TRUE),
                     "email" => $this->input->post('email', TRUE),
@@ -140,5 +140,11 @@ class Pembeli extends CI_Controller {
             'status' => 'success',
             'message' => 'berhasil memperbarui lokasi'
         ]);
+    }
+
+    public function logout()
+    {
+        $this->session->sess_destroy();
+        redirect('Pembeli/login');
     }
 }
