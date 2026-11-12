@@ -56,4 +56,14 @@ class Pembeli_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
+public function getPenjualAktif()
+{
+    return $this->db
+        ->select('id, store_name, description, phone')
+        ->where('active_selling', 1)
+        ->where('phone !=', '')
+        ->where('phone !=', '0')
+        ->get('users')
+        ->result();
+}
 }
