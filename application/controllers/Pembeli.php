@@ -11,18 +11,17 @@ class Pembeli extends CI_Controller
 
         $this->load->model('Pembeli_model');
 
-        if (!$this->ion_auth->logged_in()) 
+            if (!$this->ion_auth->logged_in())
         {
             redirect('auth/login', 'refresh');
         }
     }
 
-
-    public function index()
-    {
-
-        $this->load->view('pembeli/index');
-    }
+        public function index()
+        {
+            $data['penjual'] = $this->Pembeli_model->getPenjualAktif();
+            $this->load->view('pembeli/index', $data);
+        }
 
     // public function login()
     // {

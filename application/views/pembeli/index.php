@@ -186,12 +186,17 @@
 
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3368.7781183091256!2d106.82804601447455!3d-6.4375712590096485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69eb1403c4f39f%3A0xc4fae7de4f7e2f4!2sKurma%20Media!5e0!3m2!1sid!2sid!4v1794296199675!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 
-    <div class="penjual">
-        <h1>Nama: <br> Budi Sentyo</h1>
-        <p>Jenis Jualan</p>
-        <button>Pesan Sekarang</button>
-    </div>
-
+        <?php if (!empty($penjual)):
+            $p  = $penjual[0]; // sementara tampilkan penjual pertama
+            $wa = preg_replace('/\D/', '', $p->phone);
+            if (strpos($wa, '0') === 0) { $wa = '62' . substr($wa, 1); }
+        ?>
+        <div class="penjual">
+            <h1>Nama: <br> <?= html_escape($p->store_name) ?></h1>
+            <p><?= html_escape($p->description ?: 'Jenis Jualan') ?></p>
+            <button type="button" id="btnPesan" data-wa="<?= $wa ?>" data-nama="<?= html_escape($p->store_name) ?>">Pesan Sekarang</button>
+        </div>
+        <?php endif; ?>
     <div id="statusLocation">
 
     </div>
@@ -206,6 +211,13 @@
     <script>
         let map = null
         let marker = null
+                const btnPesan = document.getElementById('btnPesan');
+        if (btnPesan) {
+            btnPesan.addEventListener('click', function () {
+                const pesan = 'Halo ' + this.dataset.nama + ', saya mau pesan.';
+                window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
+            });
+}
         document.getElementById('syncLocation').addEventListener('click', function() {
             const statusText = document.getElementById('statusLocation')
             statusText.textContent = "Mencari lokasi"
