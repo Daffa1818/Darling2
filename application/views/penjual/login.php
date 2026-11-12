@@ -26,19 +26,8 @@
 
         <form class="form-horizontal" method="POST" 
             action="<?php echo site_url('penjual/login'); ?>">
-
-            <?= form_hidden(
-                $this->security->get_csrf_token_name(),
-                $this->security->get_csrf_hash()
-            ); ?>
             
             <div class="card-body">
-
-            <?php if ($this->session->flashdata('error')): ?>
-                <div class="alert alert-danger">
-                    <?= $this->session->flashdata('error'); ?>
-                </div>
-            <?php endif; ?>
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">

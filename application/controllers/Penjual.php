@@ -75,6 +75,14 @@ class Penjual extends CI_Controller {
         // }
 
         $this->load->view('penjual/login');
+
+        if ($this->input->method() === 'post') {
+
+            $email = $this->input->post('email', TRUE);
+            $password = $this->input->post('password');
+
+            redirect('penjual/dashboard');
+        }
     }
 
     // REGISTER
@@ -126,6 +134,14 @@ class Penjual extends CI_Controller {
         // }
 
         $this->load->view('penjual/register');
+
+        if ($this->input->method() === 'post') {
+
+            $email = $this->input->post('email', TRUE);
+            $password = $this->input->post('password');
+
+            redirect('penjual/dashboard');
+        }
     }
 
     // DATA DAGANGAN
