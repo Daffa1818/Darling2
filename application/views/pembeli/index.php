@@ -215,11 +215,18 @@
 
 	<div id="statusLocation">
 	</div>
-	<div class="penjual">
-		<h1>Nama: <br> Budi Sentyo</h1>
-		<p>Jenis Jualan</p>
-		<button>Pesan Sekarang</button>
-	</div>
+	
+  <?php if (!empty($penjual)):
+            $p  = $penjual[0]; // sementara tampilkan penjual pertama
+            $wa = preg_replace('/\D/', '', $p->phone);
+            if (strpos($wa, '0') === 0) { $wa = '62' . substr($wa, 1); }
+        ?>
+        <div class="penjual">
+            <h1>Nama: <br> <?= html_escape($p->store_name) ?></h1>
+            <p><?= html_escape($p->description ?: 'Jenis Jualan') ?></p>
+            <button type="button" id="btnPesan" data-wa="<?= $wa ?>" data-nama="<?= html_escape($p->store_name) ?>">Pesan Sekarang</button>
+        </div>
+        <?php endif; ?>
 
 	</div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -227,6 +234,13 @@
 		let map = null;
 		let marker = null;
 		let circle = null;
+     const btnPesan = document.getElementById('btnPesan');
+        if (btnPesan) {
+            btnPesan.addEventListener('click', function () {
+                const pesan = 'Halo ' + this.dataset.nama + ', saya mau pesan.';
+                window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
+            });
+        }
 
 		document.getElementById('syncLocation').addEventListener('click', function() {
 			const button = this;

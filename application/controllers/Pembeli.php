@@ -27,12 +27,11 @@ class Pembeli extends CI_Controller
         }
     }
 
-
-    public function index()
-    {
-
-        $this->load->view('pembeli/index');
-    }
+        public function index()
+        {
+            $data['penjual'] = $this->Pembeli_model->getPenjualAktif();
+            $this->load->view('pembeli/index', $data);
+        }
 
     // public function login()
     // {
