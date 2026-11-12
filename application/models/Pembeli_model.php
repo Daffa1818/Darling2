@@ -27,10 +27,16 @@ class Pembeli_model extends CI_Model {
     }
 
     public function updateLocation($id, $latitude, $longitude)
-    {   
-        $this->db->set('location', "ST_GeomFromText('POINT($longitude $latitude)', 4326)", FALSE);
-        $this->db->where('id', $id);
-        $query = $this->db->update('pembeli');
+    {
+        $point = 'POINT(' . (float) $longitude . ' ' . (float) $latitude . ')';
+
+        $query = $this->db->query(
+            'INSERT INTO users_locations (user_id, location, time_location)
+            VALUES (?, ST_GeomFromText(?, 4326, \'axis-order=long-lat\'), CURRENT_TIMESTAMP)',
+            array($id, $point)
+        );
+
+        return $query !== FALSE;
     }
 
     public function getPenjualRadius($id, $radius = 3000)
