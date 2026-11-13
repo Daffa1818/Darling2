@@ -11,18 +11,27 @@ class Pembeli extends CI_Controller
 
         $this->load->model('Pembeli_model');
 
-        if (!$this->ion_auth->logged_in()) 
-        {
+        if (!$this->ion_auth->logged_in()) {
+            if (strtolower((string) $this->router->fetch_method()) === 'synclocation') {
+                $this->output
+                    ->set_content_type('application/json')
+                    ->set_status_header(401)
+                    ->set_output(json_encode([
+                        'status' => 'error',
+                        'message' => 'Silakan login terlebih dahulu'
+                    ]));
+                exit;
+            }
+
             redirect('auth/login', 'refresh');
         }
     }
 
-
-    public function index()
-    {
-
-        $this->load->view('pembeli/index');
-    }
+        public function index()
+        {
+            $data['penjual'] = $this->Pembeli_model->getPenjualAktif();
+            $this->load->view('pembeli/index', $data);
+        }
 
     // public function login()
     // {
@@ -110,37 +119,91 @@ class Pembeli extends CI_Controller
 
     public function syncLocation()
     {
-        $id_user = $this->session->userdata('user_id');
-        $latitude = $this->input->post('latitude');
-        $longitude = $this->input->post('longitude');
-
-        if (empty($id_user)) {
-            echo json_encode([
+        if ($this->input->method(TRUE) !== 'POST') {
+            $this->jsonResponse(405, [
                 'status' => 'error',
-                'message' => 'User tidak terdeteksi'
+                'message' => 'Metode request tidak diizinkan'
             ]);
             return;
         }
 
-        if (empty($latitude) || empty($longitude)) {
-            echo json_encode([
+        $id_user = $this->ion_auth->get_user_id();
+        if (!is_numeric($id_user) || (int) $id_user <= 0) {
+            $this->jsonResponse(401, [
                 'status' => 'error',
-                'message' => 'Koordinat salah'
+                'message' => 'Silakan login terlebih dahulu'
             ]);
             return;
         }
 
-        $this->Pembeli_model->updateLocation($id_user, $latitude, $longitude);
+        $latitude = filter_var($this->input->post('latitude'), FILTER_VALIDATE_FLOAT);
+        $longitude = filter_var($this->input->post('longitude'), FILTER_VALIDATE_FLOAT);
 
-        echo json_encode([
+        if (
+            $latitude === FALSE || $longitude === FALSE
+            || $latitude < -90 || $latitude > 90
+            || $longitude < -180 || $longitude > 180
+        ) {
+            $this->jsonResponse(400, [
+                'status' => 'error',
+                'message' => 'Koordinat latitude atau longitude tidak valid'
+            ]);
+            return;
+        }
+
+        if (!$this->Pembeli_model->updateLocation((int) $id_user, $latitude, $longitude)) {
+            $this->jsonResponse(500, [
+                'status' => 'error',
+                'message' => 'Lokasi gagal disimpan'
+            ]);
+            return;
+        }
+
+        $this->jsonResponse(200, [
             'status' => 'success',
-            'message' => 'berhasil memperbarui lokasi'
+            'message' => 'Lokasi berhasil diperbarui'
         ]);
     }
 
-    public function logout()
+    private function jsonResponse($statusCode, $data)
     {
-        $this->session->sess_destroy();
-        redirect('Pembeli/login');
+        $this->output
+            ->set_content_type('application/json')
+            ->set_status_header($statusCode)
+            ->set_output(json_encode($data));
+    }
+
+    public function getPenjualTerdekat()
+    {
+        if (!$this->input->is_ajax_request())
+        {
+            exit();
+        }
+
+        $id_pembeli = $this->ion_auth->get_user_id();
+
+        if (empty($id_pembeli))
+        {
+            $this->jsonResponse(400, [
+                'status' => 'failed',
+                'message' => 'Data tidak valid'
+            ]);
+        }
+
+        try {
+            $radius = 500;
+            $penjual_list = $this->Pembeli_model->getRadiusPenjual($id_pembeli, $radius);
+
+            $this->jsonResponse(200, [
+                'status' => 'success',
+                'data' => $penjual_list
+            ]);
+        } catch (Exception $e) {
+            $this->jsonResponse(400, [
+                'status' => 'failed',
+                'message' => 'terjadi kesalahan' . $e->getMessage()
+            ]);
+        }
+
     }
 }
