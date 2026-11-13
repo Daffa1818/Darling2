@@ -25,64 +25,52 @@
             </h3>
         </div>
 
-        <!-- 1. ACTION DIBETULKAN MENGARAH KE CONTROLLER -->
-        <form method="POST" action="<?php echo site_url('penjual/proses_register'); ?>">
+        <form method="POST" action="#">
 
             <div class="card-body">
-                
-                <!-- 2. TAMBAHAN UNTUK MENAMPILKAN ERROR (Misal: No HP sudah ada) -->
-                <?php if(validation_errors()): ?>
-                    <div class="alert alert-danger" style="font-size: 14px;">
-                        <?php echo validation_errors(); ?>
-                    </div>
-                <?php endif; ?>
 
                 <div class="form-group">
                     <label>Nama Penjual</label>
-                    <!-- Name menggunakan "first_name" agar sama dengan database -->
                     <input type="text"
-                           name="first_name" 
+                           name="nama"
                            class="form-control"
                            placeholder="Masukkan nama lengkap"
-                           value="<?php echo set_value('first_name'); ?>" 
                            required>
                 </div>
 
                 <div class="form-group">
-                    <label>Nama Toko</label>
-                    <input type="text"
-                           name="store_name"
+                    <label>Email</label>
+                    <input type="email"
+                           name="email"
                            class="form-control"
-                           placeholder="Masukkan nama toko"
-                           value="<?php echo set_value('store_name'); ?>"
+                           placeholder="Masukkan email"
                            required>
                 </div>
 
                 <div class="form-group">
                     <label>Nomor HP</label>
                     <input type="text"
-                           name="phone"
+                           name="no_hp"
                            class="form-control"
                            placeholder="Masukkan nomor HP"
-                           value="<?php echo set_value('phone'); ?>"
-                           required>
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" 
-                           class="form-control" 
-                           placeholder="Masukkan Email aktif" 
-                           value="<?php echo set_value('email'); ?>" 
                            required>
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" 
-                           name="password" 
-                           class="form-control" 
-                           placeholder="Buat Password" 
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Buat password"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Konfirmasi Password</label>
+                    <input type="password"
+                           name="konfirmasi_password"
+                           class="form-control"
+                           placeholder="Ulangi password"
                            required>
                 </div>
 
