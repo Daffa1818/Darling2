@@ -19,36 +19,43 @@
 
         <div class="card-header">
             <h3 class="card-title">
-                <!-- <i class="fas fa-sign-in-alt mr-2"></i> -->
                 Login Penjual
             </h3>
         </div>
 
-        <form class="form-horizontal" method="POST" 
-            action="<?php echo site_url('penjual/login'); ?>">
+        <!-- Menampilkan pesan error jika login gagal -->
+        <?php if(isset($error)): ?>
+            <div class="alert alert-danger m-2" style="font-size: 14px;">
+                <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
+
+        <form class="form-horizontal" method="POST" action="<?php echo site_url('penjual/login'); ?>">
             
             <div class="card-body">
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">
-                        Email
+                    <!-- Label diubah -->
+                    <label class="col-sm-4 col-form-label">
+                        Email / No WA
                     </label>
 
-                    <div class="col-sm-9">
-                        <input type="email"
-                               name="email"
+                    <div class="col-sm-8">
+                        <!-- name="identity" dan type="text" agar bisa diisi email atau angka -->
+                        <input type="text"
+                               name="identity"
                                class="form-control"
-                               placeholder="Masukkan email"
+                               placeholder="Masukkan Email atau No WA"
                                required>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">
+                    <label class="col-sm-4 col-form-label">
                         Password
                     </label>
 
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                         <input type="password"
                                name="password"
                                class="form-control"
@@ -58,14 +65,10 @@
                 </div>
 
                 <div class="form-group row">
-                    <div class="offset-sm-3 col-sm-9">
+                    <div class="offset-sm-4 col-sm-8">
                         <div class="form-check">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   id="remember">
-
-                            <label class="form-check-label"
-                                   for="remember">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">
                                 Remember me
                             </label>
                         </div>
@@ -78,19 +81,12 @@
                     Login
                 </button>
 
-                <a href="<?php echo site_url('penjual/register'); ?>"
-                   class="btn btn-default float-right">
+                <a href="<?php echo site_url('penjual/register'); ?>" class="btn btn-default float-right">
                     Register
                 </a>
             </div>
         </form>
-
     </div>
-
-    <p class="text-center text-muted">
-        Radar Pedagang Keliling &copy; 2026
-    </p>
-
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

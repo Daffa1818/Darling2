@@ -6,7 +6,8 @@ class Penjual extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
-
+        $this->load->library('form_validation');
+        $this->load->database();
     }
 
     // HALAMAN AWAL
@@ -28,119 +29,80 @@ class Penjual extends CI_Controller {
     // LOGIN
     public function login()
     {
-        // if ($this->session->userdata('login')) {
-        //     redirect('penjual');
-        //     return;
-        // }
-
-        // if ($this->input->method() === 'post') {
-
-        //     $email = $this->input->post('email', TRUE);
-        //     $password = $this->input->post('password');
-
-        //     $user = $this->db
-        //         ->get_where('user', array('email' => $email))
-        //         ->row();
-
-        //     if (!$user || !password_verify($password, $user->password)) {
-        //         $this->session->set_flashdata(
-        //             'error',
-        //             'Email atau password salah!'
-        //         );
-        //         redirect('penjual/login');
-        //         return;
-        //     }
-
-        //     if ($user->role !== 'penjual') {
-        //         $this->session->set_flashdata(
-        //             'error',
-        //             'Akun ini bukan akun penjual.'
-        //         );
-        //         redirect('penjual/login');
-        //         return;
-        //     }
-
-        //     $this->session->sess_regenerate(TRUE);
-
-        //     $this->session->set_userdata(array(
-        //         'id_user' => $user->id_user,
-        //         'nama' => $user->nama,
-        //         'email' => $user->email,
-        //         'role' => $user->role,
-        //         'login' => TRUE
-        //     ));
-
-        //     redirect('penjual');
-        //     return;
-        // }
-
-        $this->load->view('penjual/login');
-
         if ($this->input->method() === 'post') {
-
-            $email = $this->input->post('email', TRUE);
+            
+            // Nangkep inputan (bisa email atau no wa)
+            $identity = $this->input->post('identity', TRUE);
             $password = $this->input->post('password');
 
-            redirect('penjual/dashboard');
+            // Cari user dari email kalo g no wa
+            $this->db->group_start();
+            $this->db->where('email', $identity);
+            $this->db->or_where('phone', $identity);
+            $this->db->group_end();
+            $user = $this->db->get('users')->row();
+
+            // Verifikasi password
+            if ($user && password_verify($password, $user->password)) {
+                
+                $this->session->set_userdata([
+                    'id_user'    => $user->id,
+                    'first_name' => $user->first_name,
+                    'email'      => $user->email,
+                    'phone'      => $user->phone,
+                    'login'      => TRUE
+                ]);
+                
+                redirect('penjual/dashboard');
+                
+            } else {
+                $data['error'] = 'Email/No WA atau Password Anda salah!';
+                $this->load->view('penjual/login', $data);
+                return;
+            }
         }
+
+        $this->load->view('penjual/login');
+    }
+
+    public function register()
+    {
+        $this->load->view('penjual/register');
     }
 
     // REGISTER
-    public function register()
+    public function proses_register()
     {
-        // if ($this->session->userdata('login')) {
-        //     redirect('penjual');
-        //     return;
-        // }
-
-        // if ($this->input->method() === 'post') {
-
-        //     $nama = $this->input->post('nama', TRUE);
-        //     $email = $this->input->post('email', TRUE);
-        //     $password = $this->input->post('password');
-
-        //     if (empty($nama) || empty($email) || empty($password)) {
-        //         $this->session->set_flashdata('error', 'Semua kolom wajib diisi.');
-        //         redirect('penjual/register');
-        //         return;
-        //     }
-
-        //     $cek = $this->db
-        //         ->get_where('user', array('email' => $email))
-        //         ->row();
-
-        //     if ($cek) {
-        //         $this->session->set_flashdata('error', 'Email sudah terdaftar!');
-        //         redirect('penjual/register');
-        //         return;
-        //     }
-
-        //     $this->db->insert('user', array(
-        //         'nama' => $nama,
-        //         'email' => $email,
-        //         'password' => password_hash($password, PASSWORD_DEFAULT),
-        //         'role' => 'penjual'
-        //     ));
-
-        //     if ($this->db->affected_rows() > 0) {
-        //         $this->session->set_flashdata('success', 'Registrasi berhasil. Silakan login.');
-        //         redirect('penjual/login');
-        //         return;
-        //     }
-
-        //     $this->session->set_flashdata('error', 'Registrasi gagal.');
-        //     redirect('penjual/register');
-        //     return;
-        // }
-
-        $this->load->view('penjual/register');
-
         if ($this->input->method() === 'post') {
+            
+            $this->form_validation->set_rules('first_name', 'Nama Penjual', 'required');
+            $this->form_validation->set_rules('store_name', 'Nama Toko', 'required');
+            $this->form_validation->set_rules('phone', 'Nomor HP', 'required|is_unique[users.phone]');
+            $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
+            $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
 
-            $email = $this->input->post('email', TRUE);
-            $password = $this->input->post('password');
+            if ($this->form_validation->run() == FALSE) {
+                $this->load->view('penjual/register');
+            } else {
+                
+                $data = array(
+                    'first_name' => $this->input->post('first_name', TRUE),
+                    'store_name' => $this->input->post('store_name', TRUE),
+                    'phone'      => $this->input->post('phone', TRUE),
+                    'email'      => $this->input->post('email', TRUE),
+                    'password'   => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                    
+                    'ip_address' => $this->input->ip_address(), 
+                    'created_on' => time(), 
+                    'active'     => 1 
+                );
 
-            redirect('penjual/dashboard');
+                $this->db->insert('users', $data);
+
+                redirect('penjual/login');
+            }
+        } else {
+            redirect('penjual/register');
         }
     }
 
