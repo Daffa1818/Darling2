@@ -76,7 +76,7 @@
             <div class="row mb-2">
 
                 <div class="col-sm-6">
-                    <h1 class="m-0">title</h1>
+                    <h1 class="m-0"><?php echo $title; ?></h1>
                 </div>
 
                 <div class="col-sm-6">
@@ -161,80 +161,29 @@
             </div>
 
 
-            <!-- STATUS BERJUALAN -->
-            <div class="card card-outline">
+<?php if ((int) $status_jualan === 1): ?>
 
-                <div class="card-header">
+    <h4 class="text-success">Sedang Aktif Berjualan</h4>
 
-                    <h3 class="card-title">
-                        <i class="fas fa-power-off mr-1"></i>
-                        Status Berjualan
-                    </h3>
+    <form method="POST" action="<?= site_url('penjual/ubah_status'); ?>">
+        <button type="submit" class="btn btn-danger">
+            NONAKTIFKAN JUALAN
+        </button>
+    </form>
 
-                </div>
+<?php else: ?>
 
-                <div class="card-body">
+    <h4 class="text-danger">Tidak Sedang Berjualan</h4>
 
-                    <div class="row align-items-center">
+    <form method="POST" action="<?= site_url('penjual/ubah_status'); ?>">
+        <button type="submit" class="btn btn-success">
+            AKTIFKAN JUALAN
+        </button>
+    </form>
 
-                        <div class="col-md-8">
-
-
-                            <h4 class="text-success">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Anda Sedang Aktif Berjualan
-                            </h4>
-
-                            <p class="text-muted mb-0">
-                                Dagangan Anda sedang ditampilkan kepada pembeli.
-                            </p>
-
-                            <h4 class="text-danger">
-                                <i class="fas fa-times-circle mr-1"></i>
-                                Anda Sedang Tidak Berjualan
-                            </h4>
-
-                            <p class="text-muted mb-0">
-                                Aktifkan status jika Anda siap mulai berjualan.
-                            </p>
-
-
-                        </div>
-
-                        <div class="col-md-4 text-md-right mt-3 mt-md-0">
-
-                            <form method="POST"
-                                action=" <?php echo site_url('penjual/ubah_status'); ?>">
-
-                                <button type="submit"
-                                    class="btn btn-success btn-lg">
-
-                                    <i class="fas fa-toggle-on mr-1"></i>
-                                    AKTIF
-
-                                </button>
-
-                                <button type="submit"
-                                    class="btn btn-danger btn-lg">
-
-                                    <i class="fas fa-toggle-off mr-1"></i>
-                                    NONAKTIF
-
-                                </button>
-                                
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+<?php endif; ?>
 
             <!-- MENU DAGANGAN -->
-
 
         </div>
 
@@ -320,15 +269,11 @@
 
                 </div>
 
-
                 <div class="modal-footer">
-
                     <button type="button"
                         class="btn btn-default"
                         data-dismiss="modal">
-
                         Batal
-
                     </button>
 
                     <button type="submit"
