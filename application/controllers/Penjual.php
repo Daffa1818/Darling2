@@ -1,96 +1,40 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Penjual extends CI_Controller
 {
+
+    #[Override]
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->library('session');
-        $this->load->helper(array('url', 'form'));
-        $this->load->database();
         $this->load->model('Penjual_model');
-        $this->load->library('form_validation');
-        $this->load->database();
     }
 
     // HALAMAN AWAL
     public function index()
     {
-        // if (!$this->session->userdata('login')) {
-        //     redirect('penjual/login');
-        //     return;
-        // }
+        $id_user = $this->ion_auth->get_user_id();
 
-        redirect('penjual/dashboard');
+        $penjual = $this->Penjual_model->get_status_jualan($id_user);
+
+        $data = [
+            'user' => $id_user,
+            'status_jualan' => $penjual,
+        ];
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('penjual/index', $data);
+        $this->load->view('templates/footer');
     }
 
-    
-// LOGIN
-public function login()
-{
-    // Jika sudah login
-    if ($this->session->userdata('login')) {
-        redirect('penjual/dashboard');
-        return;
-    }
 
-    // Proses ketika form dikirim
-    if ($this->input->method() === 'post') {
-
-        $email = $this->input->post('email', TRUE);
-        $password = $this->input->post('password');
-
-        // Cari akun berdasarkan email
-        $user = $this->db
-            ->get_where('users', array('email' => $email))
-            ->row();
-
-        // Periksa email dan password
-        if (!$user || !password_verify($password, $user->password)) {
-
-            $this->session->set_flashdata(
-                'error',
-                'Email atau password salah!'
-            );
-
-            redirect('penjual/login');
-            return;
-        }
-
-        // Buat session baru
-        $this->session->sess_regenerate(TRUE);
-
-        // Simpan identitas pengguna
-        $this->session->set_userdata(array(
-            'id_user'  => (int) $user->id,
-            'username' => $user->username,
-            'email'    => $user->email,
-            'login'    => TRUE
-        ));
-
-        // Masuk dashboard
-        redirect('penjual/dashboard');
-        return;
-    }
-
-    // Tampilkan halaman login
-    $this->load->view('penjual/login');
-}
-
-
-    // REGISTER
-    public function register()
-    {
-        if ($this->session->userdata('login')) {
-            redirect('penjual/dashboard');
-            return;
     // LOGIN
     public function login()
     {
         if ($this->input->method() === 'post') {
-            
+
             // Nangkep inputan (bisa email atau no wa)
             $identity = $this->input->post('identity', TRUE);
             $password = $this->input->post('password');
@@ -104,7 +48,7 @@ public function login()
 
             // Verifikasi password
             if ($user && password_verify($password, $user->password)) {
-                
+
                 $this->session->set_userdata([
                     'id_user'    => $user->id,
                     'first_name' => $user->first_name,
@@ -112,9 +56,8 @@ public function login()
                     'phone'      => $user->phone,
                     'login'      => TRUE
                 ]);
-                
-                redirect('penjual/dashboard');
-                
+
+                redirect('penjual/index');
             } else {
                 $data['error'] = 'Email/No WA atau Password Anda salah!';
                 $this->load->view('penjual/login', $data);
@@ -134,7 +77,7 @@ public function login()
     public function proses_register()
     {
         if ($this->input->method() === 'post') {
-            
+
             $this->form_validation->set_rules('first_name', 'Nama Penjual', 'required');
             $this->form_validation->set_rules('store_name', 'Nama Toko', 'required');
             $this->form_validation->set_rules('phone', 'Nomor HP', 'required|is_unique[users.phone]');
@@ -144,17 +87,17 @@ public function login()
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('penjual/register');
             } else {
-                
+
                 $data = array(
                     'first_name' => $this->input->post('first_name', TRUE),
                     'store_name' => $this->input->post('store_name', TRUE),
                     'phone'      => $this->input->post('phone', TRUE),
                     'email'      => $this->input->post('email', TRUE),
                     'password'   => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-                    
-                    'ip_address' => $this->input->ip_address(), 
-                    'created_on' => time(), 
-                    'active'     => 1 
+
+                    'ip_address' => $this->input->ip_address(),
+                    'created_on' => time(),
+                    'active'     => 1
                 );
 
                 $this->db->insert('users', $data);
@@ -182,40 +125,6 @@ public function login()
         $this->load->view('templates/footer');
     }
 
-    // DASHBOARD
-    public function dashboard()
-{
-    // ID 1 hanya untuk uji coba
-    $id_user = 1;
-
-    $penjual = $this->Penjual_model->get_status_jualan($id_user);
-
-    $data['status_jualan'] = $penjual
-        ? (int) $penjual->active_selling
-        : 0;
-
-    $data['title'] = 'Dashboard Penjual';
-
-    $this->load->view('templates/header', $data);
-    $this->load->view('penjual/index', $data);
-    $this->load->view('templates/footer');
-}
-//     $id_user = $this->session->userdata('id_user');
-
-//     $penjual = $this->Penjual_model
-//                     ->get_status_jualan($id_user);
-
-//     $data['status_jualan'] = $penjual
-//         ? (int) $penjual->active_selling
-//         : 0;
-
-//     // Judul halaman
-//     $data['title'] = 'Dashboard Penjual';
-
-//     $this->load->view('templates/header', $data);
-//     $this->load->view('penjual/index', $data);
-//     $this->load->view('templates/footer');
-// 
     // TAMBAH MENU
     public function tambah_menu()
     {
@@ -246,69 +155,37 @@ public function login()
     }
 
     // UBAH STATUS JUALAN
-
- public function ubah_status()
-{
-    // ID 1 untuk uji coba tanpa login
-    $id_user = 1;
-
-    // Ambil status dari database
-    $penjual = $this->Penjual_model->get_status_jualan($id_user);
-
-    if (!$penjual) {
-        redirect('penjual/dashboard');
-        return;
-    }
-
-    // Tentukan status baru
-    $status_baru = ((int) $penjual->active_selling === 1) ? 0 : 1;
-
-    // Update database
-    $this->Penjual_model->ubah_status_jualan($id_user, $status_baru);
-
-    redirect('penjual/dashboard');
-}
-//     public function ubah_status()
-// {
-//     if ($this->input->method() !== 'post') {
-//         redirect('penjual/dashboard  ');
-//         return;
-//     }
-
-//     $id_user = $this->ion_auth->get_user_id();
-
-//     $penjual = $this->Penjual_model
-//                     ->get_status_jualan($id_user);
-
-//     if (!$penjual) {
-//         $this->session->set_flashdata(
-//             'error',
-//             'Data pengguna tidak ditemukan.'
-//         );
-
-//         redirect('penjual/dashboard');
-//         return;
-//     }
-
-//     $status_baru = ((int) $penjual->active_selling === 1) ? 0 : 1;
-
-//     $berhasil = $this->Penjual_model
-//                      ->ubah_status_jualan($id_user, $status_baru);
-
-//     $this->session->set_flashdata(
-//         $berhasil ? 'success' : 'error',
-//         $berhasil
-//             ? 'Status jualan berhasil diperbarui.'
-//             : 'Gagal memperbarui status jualan.'
-//     );
-
-//     redirect('penjual/dashboard');
-// }
-    // LOGOUT
-    public function logout()
+    public function ubah_status()
     {
-        $this->session->sess_destroy();
+        if ($this->input->method() !== 'post') {
+            if ($this->input->is_ajax_request()) {
+                return $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'status' => 'error',
+                    'message' => 'Akses tidak sah.'
+                ]));
+            }
+            return;
+        }
 
-        // redirect('penjual/login');
+        $id_user = $this->ion_auth->get_user_id();
+
+        $penjual = $this->Penjual_model->get_status_jualan($id_user);
+
+        if (!$penjual) {
+            $this->session->set_flashdata(
+                'error',
+                'Data pengguna tidak ditemukan.'
+            );
+
+            redirect('penjual/index');
+            return;
+        }
+
+        $status_baru = ($penjual['active_selling'] == 1) ? 0 : 1;
+
+        $berhasil = $this->Penjual_model->ubah_status_jualan($id_user, $status_baru);
+
+        redirect('penjual/index');
     }
+    // LOGOUT
 }

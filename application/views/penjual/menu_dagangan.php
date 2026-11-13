@@ -39,7 +39,7 @@
                 data-accordion="false">
 
                 <li class="nav-item">
-                    <a href="<?php echo site_url('penjual/dashboard'); ?>"
+                    <a href="<?php echo site_url('penjual/index'); ?>"
                         class="nav-link">
 
                         <i class="nav-icon fas fa-tachometer-alt"></i>

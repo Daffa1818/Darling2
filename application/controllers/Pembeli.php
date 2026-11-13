@@ -27,59 +27,12 @@ class Pembeli extends CI_Controller
         }
     }
 
-        public function index()
-        {
-            $data['penjual'] = $this->Pembeli_model->getPenjualAktif();
-            $this->load->view('pembeli/index', $data);
-        }
-
-    // public function login()
-    // {
-    //     $this->form_validation->set_rules('email', 'email', 'required');
-    //     $this->form_validation->set_rules('password', 'password', 'required');
-
-    //     if ($this->form_validation->run() === FALSE)
-    //         {
-    //             $this->load->view('pembeli/login');
-    //         }
-    //     else 
-    //         {   
-    //             $data = [
-    //                 'email' => $this->input->post('email', TRUE),
-    //                 'password' => $this->input->post('password', TRUE),
-    //             ];
-
-    //             $user = $this->Pembeli_model->login($data['email']);
-
-    //             if ($user === null)
-    //                 {
-    //                     $this->session->set_flashdata('failed', 'data tidak ditemukan');
-
-    //                     redirect('Pembeli/login');
-    //                 }
-
-    //             if (password_verify($data['password'], $user->password))
-    //                 {
-    //                     $data_session = array(
-    //                         'id' => $user->id,
-    //                         'logged_in' => TRUE
-    //                     );
-
-    //                     $this->session->set_userdata($data_session);
-
-    //                     $this->session->set_flashdata('success', 'Berhasil login');
-
-    //                     redirect('Pembeli/index');
-    //                 }
-    //             else
-    //                 {
-    //                     $this->session->set_flashdata('failed', 'Password yang anda masukkan salah');
-
-    //                     redirect('Pembeli/login');
-    //                 }
-    //         }
-
-    // }
+    public function index()
+    {
+        $id_user = $this->ion_auth->get_user_id();
+        $data['user'] = $this->Pembeli_model->getOneUser($id_user);
+        $this->load->view('pembeli/index', $data);
+    }
 
     public function register()
     {
@@ -175,15 +128,13 @@ class Pembeli extends CI_Controller
 
     public function getPenjualTerdekat()
     {
-        if (!$this->input->is_ajax_request())
-        {
+        if (!$this->input->is_ajax_request()) {
             exit();
         }
 
         $id_pembeli = $this->ion_auth->get_user_id();
 
-        if (empty($id_pembeli))
-        {
+        if (empty($id_pembeli)) {
             $this->jsonResponse(400, [
                 'status' => 'failed',
                 'message' => 'Data tidak valid'
@@ -204,6 +155,5 @@ class Pembeli extends CI_Controller
                 'message' => 'terjadi kesalahan' . $e->getMessage()
             ]);
         }
-
     }
 }

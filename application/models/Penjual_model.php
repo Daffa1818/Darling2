@@ -5,25 +5,20 @@ class Penjual_model extends CI_Model
 {
     public function get_status_jualan($id_user)
     {
-        return $this->db
-            ->select('active_selling')
-            ->where('id', $id_user)
-            ->get('users')
-            ->row();
+        $this->db->select('active_selling');
+        $this->db->from('users');
+        $this->db->where('id', $id_user);
+        $query = $this->db->get();
+        return $query->row_array();
     }
 
     public function ubah_status_jualan($id_user, $status)
-    {
-        return $this->db
-            ->where('id', $id_user)
-            ->update('users', array(
-                'active_selling' => $status
-            ));
-class Penjual_model extends CI_Model {
+    {   
+        $data = array(
+            'active_selling' => $status
+        );
 
-    public function simpan_data($data)
-    {
-        // Insert langsung ke tabel users
-        return $this->db->insert('users', $data);
+        $this->db->where('id', $id_user);
+        return $this->db->update('users', $data);
     }
 }

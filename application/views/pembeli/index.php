@@ -209,13 +209,23 @@
 			</svg>
 		</div>
 	</div>
+	
+		<p><?php echo $user['first_name'] ?></p>
+		<p><?php echo $user['id'] ?></p>
+		<pre>
+			<?php print_r($user['daftar_role']) ?>
+		</pre>
+		<?php $roles = array_map('trim', explode(',', $user['daftar_role'])) ?>
+	
+		<?php if(in_array('penjual', $roles)) { ?>
+			<a href="<?php echo site_url('Penjual/index') ?>">ini button ke dashboard anda</a>
+		<?php } ?>
 
 	<div id="mapContainer" style="width: 100%; height: 400px">
 	</div>
 
 	<div id="statusLocation">
 	</div>
-
 
 	</div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

@@ -16,14 +16,15 @@ class Pembeli_model extends CI_Model {
         return;
     }
 
-    public function getOnePembeli($id)
+    public function getOneUser($id)
     {
-        $this->db->select("id, nama, ST_X(location) as latitude, ST_Y(location) as longitude");
-        $this->db->from('pembeli');
-        $this->db->where('id', $id);
+        $this->db->select('users.id, first_name, GROUP_CONCAT(name SEPARATOR ", ") as daftar_role', FALSE);
+        $this->db->from('users');
+        $this->db->join('users_groups', 'users_groups.user_id = users.id');
+        $this->db->join('groups', 'groups.id = users_groups.group_id');
+        $this->db->where('users.id', $id);
         $query = $this->db->get();
         return $query->row_array();
-        
     }
 
     public function updateLocation($id, $latitude, $longitude)

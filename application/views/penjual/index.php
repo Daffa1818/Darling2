@@ -1,5 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
+<pre>
+    <?php print_r($status_jualan['active_selling']) ?>
+</pre>
+
     <a href=""
         class="brand-link">
 
@@ -76,7 +80,7 @@
             <div class="row mb-2">
 
                 <div class="col-sm-6">
-                    <h1 class="m-0"><?php echo $title; ?></h1>
+
                 </div>
 
                 <div class="col-sm-6">
@@ -161,7 +165,7 @@
             </div>
 
 
-<?php if ((int) $status_jualan === 1): ?>
+<?php if ($status_jualan['active_selling'] == 1) { ?>
 
     <h4 class="text-success">Sedang Aktif Berjualan</h4>
 
@@ -171,7 +175,7 @@
         </button>
     </form>
 
-<?php else: ?>
+<?php } else { ?>
 
     <h4 class="text-danger">Tidak Sedang Berjualan</h4>
 
@@ -181,7 +185,7 @@
         </button>
     </form>
 
-<?php endif; ?>
+<?php } ?>
 
             <!-- MENU DAGANGAN -->
 
