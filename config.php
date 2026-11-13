@@ -1,6 +1,6 @@
 <?php
 
-define("BASE_URL", "http://localhost/darlingfix/Darling/");
+define("BASE_URL", "http://localhost/Project/codeigniter/Darling/");
 
 define("DB_HOST", "localhost");
 define("DB_USERNAME", "root");
