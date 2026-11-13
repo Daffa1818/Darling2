@@ -215,18 +215,7 @@
 
 	<div id="statusLocation">
 	</div>
-	
-  <?php if (!empty($penjual)):
-            $p  = $penjual[0]; // sementara tampilkan penjual pertama
-            $wa = preg_replace('/\D/', '', $p->phone);
-            if (strpos($wa, '0') === 0) { $wa = '62' . substr($wa, 1); }
-        ?>
-        <div class="penjual">
-            <h1>Nama: <br> <?= html_escape($p->store_name) ?></h1>
-            <p><?= html_escape($p->description ?: 'Jenis Jualan') ?></p>
-            <button type="button" id="btnPesan" data-wa="<?= $wa ?>" data-nama="<?= html_escape($p->store_name) ?>">Pesan Sekarang</button>
-        </div>
-        <?php endif; ?>
+
 
 	</div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -234,13 +223,65 @@
 		let map = null;
 		let marker = null;
 		let circle = null;
-     const btnPesan = document.getElementById('btnPesan');
+		let penjualMarker = null
+
+     	const btnPesan = document.getElementById('btnPesan');
         if (btnPesan) {
             btnPesan.addEventListener('click', function () {
                 const pesan = 'Halo ' + this.dataset.nama + ', saya mau pesan.';
                 window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
             });
         }
+		
+		function loadPenjualTerdekat() {
+			fetch('<?php echo site_url("pembeli/getPenjualTerdekat") ?>', {
+				method: 'GET',
+				headers: { 'X-Requested-With': 'XMLHttpRequest'}
+
+			})
+			.then(response => response.json())
+			.then(res => {
+				if (res.status === 'success') {
+					const penjualArray = res.data
+
+					if (penjualMarker) {
+						penjualMarker.clearLayers();
+					}
+
+					penjualArray.forEach(penjual => {
+						const lat = parseFloat(penjual.longitude)
+						const lng = parseFloat(penjual.latitude)
+						const namaToko = penjual.store_name || penjual.nama_penjual
+						const deskripsi = penjual.deskripsi || "Tidak ada deskripsi"
+						const phone = penjual.phone || "-"
+						const jarakKm = (penjual.jarak_meter / 1000).toFixed(2);
+
+						let wa = phone.replace(/\D/g, '')
+						if (wa.startsWith('0')) {
+							wa = '62' + wa.substr(1)
+						}
+
+						const popupContent = `
+                            <div style="min-width: 180px;">
+                                <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #1f2937;">${namaToko}</h3>
+                                <p style="margin: 0 0 4px 0; font-size: 13px; color: #6b7280;"><b>Info:</b> ${deskripsi}</p>
+                                <p style="margin: 0 0 8px 0; font-size: 13px; color: #d9534f;"><b>Jarak:</b> ${jarakKm} km</p>
+                                <a href="whatsapp://send?phone=${wa}&text=${encodeURIComponent('Halo ' + namaToko + ', saya mau pesan.')}" 
+                                   style="display: block; background: #25d366; color: white; text-align: center; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;">
+                                   Pesan via WhatsApp
+                                </a>
+                            </div>
+                        `;
+
+						const sellerMarker = L.marker([lat, lng]).bindPopup(popupContent);
+                        penjualMarker.addLayer(sellerMarker);
+					})
+				}
+			})
+			.catch(error => {
+				console.error('Gagal Memuat data Penjual terdekat: ', error)
+			})
+		}
 
 		document.getElementById('syncLocation').addEventListener('click', function() {
 			const button = this;
@@ -267,7 +308,8 @@
 				fetch('<?php echo site_url("pembeli/syncLocation") ?>', {
 						method: 'POST',
 						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded'
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-Requested-With': 'XMLHttpRequest'
 						},
 						body: body.toString()
 					})
@@ -307,6 +349,8 @@
 								fillColor: '#25d366',
 								fillOpacity: 0.2
 							}).addTo(map);
+
+							penjualMarker = L.layerGroup().addTo(map)
 						} else {
 							map.setView([lat, lng], 16);
 							marker.setLatLng([lat, lng]);
@@ -316,6 +360,8 @@
 						setTimeout(function() {
 							map.invalidateSize();
 						}, 100);
+
+						loadPenjualTerdekat()
 					})
 					.catch(function(error) {
 						statusText.textContent = error.message;

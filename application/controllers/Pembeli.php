@@ -173,9 +173,37 @@ class Pembeli extends CI_Controller
             ->set_output(json_encode($data));
     }
 
-    public function logout()
+    public function getPenjualTerdekat()
     {
-        $this->session->sess_destroy();
-        redirect('Pembeli/login');
+        if (!$this->input->is_ajax_request())
+        {
+            exit();
+        }
+
+        $id_pembeli = $this->ion_auth->get_user_id();
+
+        if (empty($id_pembeli))
+        {
+            $this->jsonResponse(400, [
+                'status' => 'failed',
+                'message' => 'Data tidak valid'
+            ]);
+        }
+
+        try {
+            $radius = 500;
+            $penjual_list = $this->Pembeli_model->getRadiusPenjual($id_pembeli, $radius);
+
+            $this->jsonResponse(200, [
+                'status' => 'success',
+                'data' => $penjual_list
+            ]);
+        } catch (Exception $e) {
+            $this->jsonResponse(400, [
+                'status' => 'failed',
+                'message' => 'terjadi kesalahan' . $e->getMessage()
+            ]);
+        }
+
     }
 }

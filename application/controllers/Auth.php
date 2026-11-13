@@ -501,8 +501,10 @@ class Auth extends CI_Controller
 				'company' => $this->input->post('company'),
 				'phone' => $this->input->post('phone'),
 			];
+
+			$group = ['2'];
 		}
-		if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data))
+		if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data, $group))
 		{
 			// check to see if we are creating the user
 			// redirect them back to the admin page
