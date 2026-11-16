@@ -6,6 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Halaman Penjual</title>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+	<!-- Google Font: Source Sans Pro -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" href="<?php echo base_url('assets/plugins/fontawesome-free/css/all.min.css'); ?>">
+	<!-- Theme style -->
+	<link rel="stylesheet" href="<?php echo base_url('assets/dist/css/adminlte.min.css'); ?>">
 	<style>
 		:root {
 			--bg: #f4f6f8;
@@ -199,29 +205,45 @@
 </head>
 
 <body>
+	<?php $roles = isset($user['daftar_role']) ? array_map('trim', explode(',', $user['daftar_role'])) : []; ?>
 	<!-- Top bar -->
 	<div class="topbar">
 		<button type="button" id="syncLocation" class="btn-wa">Sync Lokasi</button>
 
-		<div class="profile" title="Kamu sudah login" role="img" aria-label="Sudah login">
-			<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-				<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z" />
-			</svg>
+		<div class="nav-item dropdown">
+			<a class="profile" data-toggle="dropdown" href="#" role="button" title="Kamu sudah login" aria-label="Menu profil">
+				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z" />
+				</svg>
+			</a>
+
+			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+				<div class="dropdown-divider"></div>
+				<?php if (in_array('penjual', $roles)) { ?>
+					<form action="<?php echo site_url('Penjual/index') ?>">
+						<button class="dropdown-item">
+							<i class="fas fa-tachometer-alt mr-2"></i> Pergi ke dashboard Anda
+						</button>
+					</form>
+				<?php } else { ?>
+					<form action="<?php echo site_url('Penjual/register') ?>">
+						<button class="dropdown-item">
+							<i class="fas fa-user-plus mr-2"></i> Daftar jadi penjual sekarang
+						</button>
+					</form>
+				<?php } ?>
+
+
+				<div class="dropdown-divider"></div>
+				<form action="<?php echo site_url('auth/logout'); ?>" method="post" id="logoutForm">
+					<button type="submit" class="dropdown-item">
+						<i class="fas fa-sign-out-alt mr-2"></i> Sign out
+					</button>
+				</form>
+			</div>
 		</div>
 	</div>
-	
-		<p><?php echo $user['first_name'] ?></p>
-		<p><?php echo $user['id'] ?></p>
-		<pre>
-			<?php print_r($user['daftar_role']) ?>
-		</pre>
-		<?php $roles = array_map('trim', explode(',', $user['daftar_role'])) ?>
-	
-		<?php if(in_array('penjual', $roles)) { ?>
-			<a href="<?php echo site_url('Penjual/index') ?>">ini button ke dashboard anda</a>
-		<?php } else { ?>
-			<a href="<?php echo site_url('Penjual/register') ?>">Daftar jadi penjual sekarang</a>
-		<?php } ?>
+	</div>
 
 	<div id="mapContainer" style="width: 100%; height: 400px">
 	</div>
@@ -256,17 +278,9 @@
 		
 		function loadPenjualTerdekat() {
 			fetch('<?php echo site_url("pembeli/getPenjualTerdekat") ?>', {
-				method: 'GET',
-				headers: { 'X-Requested-With': 'XMLHttpRequest'}
-
-			})
-			.then(response => response.json())
-			.then(res => {
-				if (res.status === 'success') {
-					const penjualArray = res.data
-
-					if (penjualMarker) {
-						penjualMarker.clearLayers();
+					method: 'GET',
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest'
 					}
 
 					penjualArray.forEach(penjual => {
@@ -370,7 +384,7 @@
 
 							circle = L.circle([lat, lng], {
 								radius: 500,
-								color: '#25d366', 
+								color: '#25d366',
 								fillColor: '#25d366',
 								fillOpacity: 0.2
 							}).addTo(map);
@@ -379,7 +393,7 @@
 						} else {
 							map.setView([lat, lng], 16);
 							marker.setLatLng([lat, lng]);
-							circle.setLatLng([lat, lng]); 
+							circle.setLatLng([lat, lng]);
 						}
 
 						setTimeout(function() {
@@ -409,6 +423,11 @@
 			});
 		});
 	</script>
+	<script src="<?php echo base_url('assets/plugins/jquery/jquery.min.js'); ?>"></script>
+	<!-- Bootstrap 4 -->
+	<script src="<?php echo base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
+	<!-- AdminLTE App -->
+	<script src="<?php echo base_url('assets/dist/js/adminlte.min.js'); ?>"></script>
 </body>
 
 </html>

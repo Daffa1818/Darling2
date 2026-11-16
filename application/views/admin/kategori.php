@@ -112,25 +112,18 @@
 								<div class="card-header">
 									<h3 class="card-title">Tambah Kategori Baru</h3>
 								</div>
-								<form onsubmit="event.preventDefault(); alert('Simulasi: Kategori jajanan baru berhasil ditambahkan!');">
+								<form action="<?php echo site_url('Admin/kategori') ?>" method="POST">
 									<div class="card-body">
 										<div class="form-group">
 											<label>Nama Kategori</label>
-											<input type="text" class="form-control" placeholder="Contoh: Makanan Berat, Minuman" required>
+											<input type="text" class="form-control" placeholder="Contoh: Makanan Berat, Minuman" value="<?php echo set_value('type') ?>" name="type">
 										</div>
+										<?php echo form_error('type','<small class="text-danger">', '</small>') ?>
 										<div class="form-group">
-											<label>Deskripsi Singkat</label>
-											<textarea class="form-control" rows="2" placeholder="Contoh: Bakso, Mie Ayam, Soto, Nasi Goreng"></textarea>
+											<label>Warna Marker</label>
+											<input type="text" class="form-control" placeholder="Contoh: Merah, Biru" value="<?php echo set_value('colour_marker') ?>" name="colour_marker">
 										</div>
-										<div class="form-group">
-											<label>Warna Pin / Marker di Peta</label>
-											<select class="form-control">
-												<option value="merah">Merah (Makanan Berat)</option>
-												<option value="biru">Biru (Minuman Segar)</option>
-												<option value="kuning">Kuning (Jajanan Ringan / Gorengan)</option>
-												<option value="hijau">Hijau (Kue Tradisional / Roti)</option>
-											</select>
-										</div>
+										<?php echo form_error('colour_marker','<small class="text-danger">', '</small>') ?>
 									</div>
 									<div class="card-footer">
 										<button type="submit" class="btn btn-warning btn-block">
@@ -153,58 +146,19 @@
 											<tr>
 												<th>No</th>
 												<th>Nama Kategori</th>
-												<th>Contoh Jajanan</th>
-												<th>Warna Pin Peta</th>
-												<th>Jumlah Mitra</th>
-												<th>Aksi</th>
+												<th>Warna Marker</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>1</td>
-												<td><b>Makanan Berat</b></td>
-												<td>Bakso, Mie Ayam, Bubur Ayam, Soto</td>
-												<td><span class="badge badge-danger"><i class="fas fa-map-pin mr-1"></i> Pin Merah</span></td>
-												<td>18 Pedagang</td>
-												<td>
-													<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal-edit-kategori">
-														<i class="fas fa-edit"></i> Edit
-													</button>
-													<button type="button" class="btn btn-danger btn-xs" onclick="alert('Simulasi: Kategori dihapus!')">
-														<i class="fas fa-trash"></i> Hapus
-													</button>
-												</td>
-											</tr>
-											<tr>
-												<td>2</td>
-												<td><b>Minuman Segar</b></td>
-												<td>Es Doger, Es Cendol, Es Teh, Kopi Keliling</td>
-												<td><span class="badge badge-primary"><i class="fas fa-map-pin mr-1"></i> Pin Biru</span></td>
-												<td>12 Pedagang</td>
-												<td>
-													<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal-edit-kategori">
-														<i class="fas fa-edit"></i> Edit
-													</button>
-													<button type="button" class="btn btn-danger btn-xs" onclick="alert('Simulasi: Kategori dihapus!')">
-														<i class="fas fa-trash"></i> Hapus
-													</button>
-												</td>
-											</tr>
-											<tr>
-												<td>3</td>
-												<td><b>Jajanan Ringan</b></td>
-												<td>Siomay, Batagor, Cilok, Cimol, Tahu Bulat</td>
-												<td><span class="badge badge-warning"><i class="fas fa-map-pin mr-1"></i> Pin Kuning</span></td>
-												<td>9 Pedagang</td>
-												<td>
-													<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal-edit-kategori">
-														<i class="fas fa-edit"></i> Edit
-													</button>
-													<button type="button" class="btn btn-danger btn-xs" onclick="alert('Simulasi: Kategori dihapus!')">
-														<i class="fas fa-trash"></i> Hapus
-													</button>
-												</td>
-											</tr>
+											<?php $no = 1;
+											foreach ($allCategory as $data) : ?>
+												<tr>
+													<td><?php echo $no ?></td>
+													<td><?php echo $data['type'] ?></td>
+													<td><?php echo $data['colour_marker'] ?></td>
+												</tr>
+											<?php $no++;
+											endforeach ?>
 											<tr>
 												<td>4</td>
 												<td><b>Kue & Roti</b></td>
