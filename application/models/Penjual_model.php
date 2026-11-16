@@ -5,7 +5,8 @@ class Penjual_model extends CI_Model
 {
     public function get_status_jualan($id_user)
     {
-        $this->db->select('active_selling');
+        // Ditambah: store_name, template_text
+        $this->db->select('active_selling, store_name, template_text');
         $this->db->from('users');
         $this->db->where('id', $id_user);
         $query = $this->db->get();
@@ -20,5 +21,14 @@ class Penjual_model extends CI_Model
 
         $this->db->where('id', $id_user);
         return $this->db->update('users', $data);
+    }
+
+    // BARU: simpan template pesan WhatsApp
+    public function update_template($id_user, $template)
+    {
+        $this->db->where('id', $id_user);
+        return $this->db->update('users', array(
+            'template_text' => $template
+        ));
     }
 }

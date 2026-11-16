@@ -194,4 +194,19 @@ class Penjual extends CI_Controller
         $this->load->view('penjual/menu_dagangan');
         $this->load->view('templates/footer');
     }
+
+    public function simpan_template()
+{
+    $id       = $this->ion_auth->user()->row()->id;
+    $template = trim($this->input->post('template_text', TRUE));
+
+    if ($template !== '') {
+        $this->Penjual_model->update_template($id, $template);
+        $this->session->set_flashdata('pesan', 'Template pesan berhasil disimpan.');
+    }
+
+    redirect('penjual');
+}
+
+
 }

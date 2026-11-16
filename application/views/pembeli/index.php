@@ -229,7 +229,6 @@
 	<div id="statusLocation">
 	</div>
 
-	</div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 	<script>
 		let map = null;
@@ -240,10 +239,20 @@
      	const btnPesan = document.getElementById('btnPesan');
         if (btnPesan) {
             btnPesan.addEventListener('click', function () {
-                const pesan = 'Halo ' + this.dataset.nama + ', saya mau pesan.';
+                const pesan = this.dataset.template_text;
                 window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
             });
         }
+
+		// Aman untuk ditampilkan di dalam HTML popup (cegah isi toko berisi tag HTML)
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+
+		// Pesan default kalau penjual belum mengisi template di dashboard
+		const TEMPLATE_DEFAULT = 'Halo {nama_toko}, saya mau pesan.';
 		
 		function loadPenjualTerdekat() {
 			fetch('<?php echo site_url("pembeli/getPenjualTerdekat") ?>', {
@@ -263,8 +272,7 @@
 					penjualArray.forEach(penjual => {
 						const lng = parseFloat(penjual.longitude)
 						const lat = parseFloat(penjual.latitude)
-						const namaToko = penjual.store_name || penjual.nama_penjual
-						const deskripsi = penjual.deskripsi || "Tidak ada deskripsi"
+						const namaToko = penjual.store_name || penjual.nama_penjual || 'Penjual'
 						const phone = penjual.phone || "-"
 						const jarakKm = (penjual.jarak_meter / 1000).toFixed(2);
 
@@ -273,19 +281,24 @@
 							wa = '62' + wa.substr(1)
 						}
 
+						// Pesan WhatsApp: pakai template penjual (users.template_text)
+						const template = (penjual.template_text && penjual.template_text.trim() !== '')
+							? penjual.template_text
+							: TEMPLATE_DEFAULT;
+						const pesanWa = template.replace(/\{nama_toko\}/g, namaToko);
+
 						const popupContent = `
                             <div style="min-width: 180px;">
-                                <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #1f2937;">${namaToko}</h3>
-                                <p style="margin: 0 0 4px 0; font-size: 13px; color: #6b7280;"><b>Info:</b> ${deskripsi}</p>
+                                <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #1f2937;">${escapeHtml(namaToko)}</h3>
                                 <p style="margin: 0 0 8px 0; font-size: 13px; color: #d9534f;"><b>Jarak:</b> ${jarakKm} km</p>
-                                <a href="whatsapp://send?phone=${wa}&text=${encodeURIComponent('Halo ' + namaToko + ', saya mau pesan.')}" 
+                                <a href="whatsapp://send?phone=${wa}&text=${encodeURIComponent(pesanWa)}" 
                                    style="display: block; background: #25d366; color: white; text-align: center; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;">
                                    Pesan via WhatsApp
                                 </a>
                             </div>
                         `;
 
-						const sellerMarker = L.marker([lat, lng]).bindPopup(popupContent);
+						const sellerMarker = L.marker([lng, lat]).bindPopup(popupContent);
                         penjualMarker.addLayer(sellerMarker);
 					})
 				}
