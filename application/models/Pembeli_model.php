@@ -96,8 +96,8 @@ class Pembeli_model extends CI_Model {
             users.id,
             users.username as nama_penjual,
             users.store_name,
-            users.description,
             users.phone,
+            users.template_text,
             ST_X(ul.location) as longitude,
             ST_Y(ul.location) as latitude,
             ST_Distance_Sphere(ul.location, ST_GeomFromText('POINT({$p_lng} {$p_lat})', 4326)) as jarak_meter
