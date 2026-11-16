@@ -27,16 +27,24 @@ class Pembeli_model extends CI_Model {
     }
 
     public function updateLocation($id, $latitude, $longitude)
-    {
-        $point = 'POINT(' . (float) $longitude . ' ' . (float) $latitude . ')';
+    {   
+		$point = 'POINT(' . (float) $longitude . ' ' . (float) $latitude . ')';
+		$version = $this->db->version();
 
-        $query = $this->db->query(
-            'INSERT INTO users_locations (user_id, location, time_location)
-            VALUES (?, ST_GeomFromText(?, 4326, \'axis-order=long-lat\'), CURRENT_TIMESTAMP)',
-            array($id, $point)
-        );
+		// Check if running MySQL 8.0+ (and not MariaDB)
+		$isMySQL8 = (stripos($version, 'MariaDB') === FALSE && version_compare($version, '8.0.0', '>='));
 
-        return $query !== FALSE;
+		if ($isMySQL8) {
+			$geomSql = "ST_GeomFromText(" . $this->db->escape($point) . ", 4326, 'axis-order=long-lat')";
+		} else {
+			$geomSql = "ST_GeomFromText(" . $this->db->escape($point) . ", 4326)";
+		}
+
+		$this->db->set('user_id', $id);
+		$this->db->set('location', $geomSql, FALSE);
+		$this->db->set('time_location', 'CURRENT_TIMESTAMP', FALSE);
+
+		return $this->db->insert('users_locations');
     }
 
     
@@ -70,7 +78,7 @@ class Pembeli_model extends CI_Model {
         $p_lng = $pembeli['longitude'];
 
         // Posisi pembeli 
-        $pembeli_point = "POINT($p_lat $p_lng)";
+        // $pembeli_point = "POINT($p_lng $p_lat)";
 
         // 2. Mengambil semua id dan mengelompokkan user_id yang sama lalu dicari id yang paling tinggi ( itu adalah lokasi terakhir)
         $location_per_user = $this->db->select_max('id')
@@ -92,7 +100,7 @@ class Pembeli_model extends CI_Model {
             users.phone,
             ST_X(ul.location) as longitude,
             ST_Y(ul.location) as latitude,
-            ST_Distance_Sphere(ul.location, ST_GeomFromText('{$pembeli_point}', 4326, 'axis-order=long-lat')) as jarak_meter
+            ST_Distance_Sphere(ul.location, ST_GeomFromText('POINT({$p_lng} {$p_lat})', 4326)) as jarak_meter
         ", FALSE);
 
         $this->db->from('users');

@@ -261,8 +261,8 @@
 					}
 
 					penjualArray.forEach(penjual => {
-						const lat = parseFloat(penjual.longitude)
-						const lng = parseFloat(penjual.latitude)
+						const lng = parseFloat(penjual.longitude)
+						const lat = parseFloat(penjual.latitude)
 						const namaToko = penjual.store_name || penjual.nama_penjual
 						const deskripsi = penjual.deskripsi || "Tidak ada deskripsi"
 						const phone = penjual.phone || "-"

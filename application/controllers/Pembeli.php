@@ -10,34 +10,31 @@ class Pembeli extends CI_Controller
         parent::__construct();
 
         $this->load->model('Pembeli_model');
+    }
 
+
+    public function index()
+    {
+        if (!$this->ion_auth->logged_in()) {
+            if (strtolower((string) $this->router->fetch_method()) === 'synclocation') {
+                $this->output
+                    ->set_content_type('application/json')
+                    ->set_status_header(401)
+                    ->set_output(json_encode([
+                        'status' => 'error',
+                        'message' => 'Silakan login terlebih dahulu'
+                    ]));
+                exit;
+            }
+
+            redirect('auth/login', 'refresh');
         }
-        
-        
-        public function index()
-        {
-            if (!$this->ion_auth->logged_in()) {
-                if (strtolower((string) $this->router->fetch_method()) === 'synclocation') {
-                    $this->output
-                        ->set_content_type('application/json')
-                        ->set_status_header(401)
-                        ->set_output(json_encode([
-                            'status' => 'error',
-                            'message' => 'Silakan login terlebih dahulu'
-                        ]));
-                    exit;
-                }
 
-                redirect('auth/login', 'refresh');
-                
-                }
-                
-                $id_user = $this->ion_auth->get_user_id();
-                $data['user'] = $this->Pembeli_model->getOneUser($id_user);
-                
-                $this->load->view('Pembeli/index', $data);
+        $id_user = $this->ion_auth->get_user_id();
+        $data['user'] = $this->Pembeli_model->getOneUser($id_user);
 
-        }
+        $this->load->view('pembeli/index', $data);
+    }
 
     public function register()
     {
