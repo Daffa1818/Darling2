@@ -225,6 +225,13 @@
 							<i class="fas fa-tachometer-alt mr-2"></i> Pergi ke dashboard Anda
 						</button>
 					</form>
+					<?php if (in_array('admin', $roles)) { ?>
+						<form action="<?php echo site_url('admin/index') ?>">
+						<button class="dropdown-item">
+							<i class="fas fa-tachometer-alt mr-2"></i>Dashboard Khusus Admin
+						</button>
+					</form>
+					<?php } ?>
 				<?php } else { ?>
 					<form action="<?php echo site_url('Penjual/register') ?>">
 						<button class="dropdown-item">

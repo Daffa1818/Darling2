@@ -84,16 +84,16 @@ class Admin extends CI_Controller
 		$this->load->view('templates/footer', $data);
 	}
 
-	public function laporan()
-	{
-		$data = array(
-			'title' => 'Laporan & Keluhan'
-		);
+	// public function laporan()
+	// {
+	// 	$data = array(
+	// 		'title' => 'Laporan & Keluhan'
+	// 	);
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('admin/laporan', $data);
-		$this->load->view('templates/footer', $data);
-	}
+	// 	$this->load->view('templates/header', $data);
+	// 	$this->load->view('admin/laporan', $data);
+	// 	$this->load->view('templates/footer', $data);
+	// }
 
 	public function pengaturan()
 	{
