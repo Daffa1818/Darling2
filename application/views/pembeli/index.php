@@ -243,7 +243,6 @@
 			</div>
 		</div>
 	</div>
-	</div>
 
 	<div id="mapContainer" style="width: 100%; height: 400px">
 	</div>
@@ -258,13 +257,14 @@
 		let circle = null;
 		let penjualMarker = null
 
-     	const btnPesan = document.getElementById('btnPesan');
-        if (btnPesan) {
-            btnPesan.addEventListener('click', function () {
-                const pesan = this.dataset.template_text;
-                window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
-            });
-        }
+		const btnPesan = document.getElementById('btnPesan');
+		if (btnPesan) {
+			btnPesan.addEventListener('click', function() {
+				const pesan = this.dataset.template_text;
+				window.location.href = 'whatsapp://send?phone=' + this.dataset.wa + '&text=' + encodeURIComponent(pesan);
+			});
+		}
+
 
 		// Aman untuk ditampilkan di dalam HTML popup (cegah isi toko berisi tag HTML)
 		function escapeHtml(text) {
@@ -275,33 +275,45 @@
 
 		// Pesan default kalau penjual belum mengisi template di dashboard
 		const TEMPLATE_DEFAULT = 'Halo {nama_toko}, saya mau pesan.';
-		
+
+
+		// Function untuk mencari Penjual berdasarkan radius
 		function loadPenjualTerdekat() {
 			fetch('<?php echo site_url("pembeli/getPenjualTerdekat") ?>', {
 					method: 'GET',
 					headers: {
 						'X-Requested-With': 'XMLHttpRequest'
 					}
+				})
+				.then(response => response.json())
+				.then(res => {
+					if (res.status === 'success') {
+						const penjualArray = res.data
 
-					penjualArray.forEach(penjual => {
-						const lng = parseFloat(penjual.longitude)
-						const lat = parseFloat(penjual.latitude)
-						const namaToko = penjual.store_name || penjual.nama_penjual || 'Penjual'
-						const phone = penjual.phone || "-"
-						const jarakKm = (penjual.jarak_meter / 1000).toFixed(2);
-
-						let wa = phone.replace(/\D/g, '')
-						if (wa.startsWith('0')) {
-							wa = '62' + wa.substr(1)
+						if (penjualMarker) {
+							penjualMarker.clearLayers();
 						}
 
-						// Pesan WhatsApp: pakai template penjual (users.template_text)
-						const template = (penjual.template_text && penjual.template_text.trim() !== '')
-							? penjual.template_text
-							: TEMPLATE_DEFAULT;
-						const pesanWa = template.replace(/\{nama_toko\}/g, namaToko);
+						penjualArray.forEach(penjual => {
+							const lng = parseFloat(penjual.longitude)
+							const lat = parseFloat(penjual.latitude)
+							const namaToko = penjual.store_name || penjual.nama_penjual || 'Penjual'
+							const phone = penjual.phone || "-"
+							const jarakKm = (penjual.jarak_meter / 1000).toFixed(2);
+							const type = penjual.type
 
-						const popupContent = `
+							let wa = phone.replace(/\D/g, '')
+							if (wa.startsWith('0')) {
+								wa = '62' + wa.substr(1)
+							}
+
+							// Pesan WhatsApp: pakai template penjual (users.template_text)
+							const template = (penjual.template_text && penjual.template_text.trim() !== '') ?
+								penjual.template_text :
+								TEMPLATE_DEFAULT;
+							const pesanWa = template.replace(/\{nama_toko\}/g, namaToko);
+
+							const popupContent = `
                             <div style="min-width: 180px;">
                                 <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #1f2937;">${escapeHtml(namaToko)}</h3>
                                 <p style="margin: 0 0 8px 0; font-size: 13px; color: #d9534f;"><b>Jarak:</b> ${jarakKm} km</p>
@@ -312,15 +324,35 @@
                             </div>
                         `;
 
-						const sellerMarker = L.marker([lng, lat]).bindPopup(popupContent);
-                        penjualMarker.addLayer(sellerMarker);
-					})
-				}
-			})
-			.catch(error => {
-				console.error('Gagal Memuat data Penjual terdekat: ', error)
-			})
+							const sellerMarker = L.circleMarker([lng, lat], {
+								radius: 8,
+								fillColor: getColorByCategory(type),
+								color: "#000",
+								weight: 1,
+								opacity: 1,
+								fillOpacity: 0.8
+							}).bindPopup(popupContent);
+							penjualMarker.addLayer(sellerMarker);
+						})
+					}
+				})
+				.catch(error => {
+					console.error('Gagal Memuat data Penjual terdekat: ', error)
+				})
 		}
+
+
+		function getColorByCategory(color) {
+			switch (color) {
+				case "Makanan Berat":
+					return 'red'
+					break;
+				case "Minuman":
+					return 'blue'
+					break;
+			}
+		}
+
 
 		document.getElementById('syncLocation').addEventListener('click', function() {
 			const button = this;
