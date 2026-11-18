@@ -66,7 +66,11 @@ class Admin extends CI_Controller
 		$this->form_validation->set_rules('colour_marker', 'Warna Marker', 'required');
 
 		if ($this->form_validation->run() === FALSE) {
+			
+			$this->load->view('templates/header', $data);
 			$this->load->view('admin/kategori', $data);
+			$this->load->view('templates/footer', $data);
+
 		} else {
 
 			$category = [
@@ -75,13 +79,11 @@ class Admin extends CI_Controller
 			];
 
 			$this->Admin_model->createCategory($category);
-
+			
+			$this->load->view('templates/header', $data);
 			$this->load->view('admin/kategori', $data);
+			$this->load->view('templates/footer', $data);
 		}
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('admin/kategori', $data);
-		$this->load->view('templates/footer', $data);
 	}
 
 	// public function laporan()

@@ -270,9 +270,15 @@
 				if (res.status === 'success') {
 					const penjualArray = res.data
 
-					if (penjualMarker) {
-						penjualMarker.clearLayers();
-					}
+					if (!penjualMarker) {
+							if (map !== null) {
+								penjualMarker = L.layerGroup().addTo(map);
+							} else {
+								return; // Hentikan jika peta belum siap
+							}
+						} else {
+							penjualMarker.clearLayers();
+						}
 
 					penjualArray.forEach(penjual => {
 						const lng = parseFloat(penjual.longitude)
@@ -292,7 +298,7 @@
                             </div>
                         `;
 
-						const sellerMarker = L.marker([lng, lat]).bindPopup(popupContent);
+						const sellerMarker = L.marker([lat, lng]).bindPopup(popupContent);
                         penjualMarker.addLayer(sellerMarker);
 					})
 				}

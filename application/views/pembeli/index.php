@@ -297,7 +297,13 @@
 					if (res.status === 'success') {
 						const penjualArray = res.data
 
-						if (penjualMarker) {
+						if (!penjualMarker) {
+							if (map !== null) {
+								penjualMarker = L.layerGroup().addTo(map);
+							} else {
+								return; // Hentikan jika peta belum siap
+							}
+						} else {
 							penjualMarker.clearLayers();
 						}
 
@@ -331,7 +337,7 @@
                             </div>
                         `;
 
-							const sellerMarker = L.circleMarker([lng, lat], {
+							const sellerMarker = L.circleMarker([lat, lng], {
 								radius: 8,
 								fillColor: getColorByCategory(type),
 								color: "#000",

@@ -31,10 +31,18 @@ class Admin_model extends CI_Model {
 
     public function getAllPedagang()
     {
-        $this->db->select('store_name, type, active_selling');
+        $this->db->select('users.id, users.store_name, GROUP_CONCAT(categories.type SEPARATOR ", ") AS type, users.active_selling');
         $this->db->from('users');
+
+        $this->db->join('users_groups', 'users_groups.user_id = users.id');
+        $this->db->join('groups', 'groups.id = users_groups.group_id');
+
         $this->db->join('category_sellers', 'category_sellers.user_id = users.id');
         $this->db->join('categories', 'categories.id = category_sellers.category_id');
+        
+        $this->db->where('groups.id', 3);
+        $this->db->group_by('users.id');
+
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -55,10 +63,6 @@ class Admin_model extends CI_Model {
     public function getLocationActive()
     {   
         
-
-        // Posisi pembeli 
-        // $pembeli_point = "POINT($p_lng $p_lat)";
-
         // 2. Mengambil semua id dan mengelompokkan user_id yang sama lalu dicari id yang paling tinggi ( itu adalah lokasi terakhir)
         $location_per_user = $this->db->select_max('id')
                                 ->from('users_locations')

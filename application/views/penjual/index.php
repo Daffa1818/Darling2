@@ -124,7 +124,7 @@ $flash_pesan      = isset($this->session) ? $this->session->flashdata('pesan') :
                         Jenis Dagangan:
                         <form action="<?php echo site_url('penjual/updateCategory') ?>" method="POST">
                             <label for="category">Pilih Kategori</label>
-                            <select name="category_id" id="category">
+                            <select name="category_id" id="category" required   >
                                 <option value="<?php echo set_value('category'); ?>">-- KATEGORI JUALAN --</option>
 
                                 <?php foreach ($category as $c) : ?>

@@ -109,7 +109,7 @@
 										<?php echo form_error('type','<small class="text-danger">', '</small>') ?>
 										<div class="form-group">
 											<label>Warna Marker</label>
-											<input type="text" class="form-control" placeholder="Contoh: Merah, Biru" value="<?php echo set_value('colour_marker') ?>" name="colour_marker">
+											<input type="color" class="form-control" value="<?php echo set_value('colour_marker') ?>" name="colour_marker">
 										</div>
 										<?php echo form_error('colour_marker','<small class="text-danger">', '</small>') ?>
 									</div>
@@ -147,21 +147,6 @@
 												</tr>
 											<?php $no++;
 											endforeach ?>
-											<tr>
-												<td>4</td>
-												<td><b>Kue & Roti</b></td>
-												<td>Sari Roti, Kue Putu, Kue Ape, Martabak Mini</td>
-												<td><span class="badge badge-success"><i class="fas fa-map-pin mr-1"></i> Pin Hijau</span></td>
-												<td>5 Pedagang</td>
-												<td>
-													<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#modal-edit-kategori">
-														<i class="fas fa-edit"></i> Edit
-													</button>
-													<button type="button" class="btn btn-danger btn-xs" onclick="alert('Simulasi: Kategori dihapus!')">
-														<i class="fas fa-trash"></i> Hapus
-													</button>
-												</td>
-											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -173,49 +158,6 @@
 			<!-- /.content -->
 		</div>
 		<!-- /.content-wrapper -->
-
-		<!-- ========================================================================= -->
-		<!-- MODAL POP-UP EDIT KATEGORI                                                -->
-		<!-- ========================================================================= -->
-		<!-- ========================================================================= -->
-		<!-- MODAL POP-UP EDIT KATEGORI                                                -->
-		<!-- ========================================================================= -->
-		<div class="modal fade" id="modal-edit-kategori">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header bg-warning">
-						<h4 class="modal-title">Edit Kategori Jajanan</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label>Nama Kategori</label>
-							<input type="text" class="form-control" value="Makanan Berat">
-						</div>
-						<div class="form-group">
-							<label>Contoh Jajanan</label>
-							<textarea class="form-control" rows="2">Bakso, Mie Ayam, Bubur Ayam, Soto</textarea>
-						</div>
-						<div class="form-group">
-							<label>Warna Pin / Marker di Peta</label>
-							<select class="form-control">
-								<option selected>Merah (Makanan Berat)</option>
-								<option>Biru (Minuman Segar)</option>
-								<option>Kuning (Jajanan Ringan)</option>
-								<option>Hijau (Kue Tradisional)</option>
-							</select>
-						</div>
-					</div>
-					<div class="modal-footer justify-content-between">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-						<button type="button" class="btn btn-warning" data-dismiss="modal" onclick="alert('Simulasi: Perubahan kategori berhasil disimpan!')">Simpan Perubahan</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<!-- Control Sidebar -->
 		<aside class="control-sidebar control-sidebar-dark">
 			<!-- Control sidebar content goes here -->

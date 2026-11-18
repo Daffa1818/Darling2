@@ -31,12 +31,13 @@ class Penjual extends CI_Controller
     }
 
     public function updateCategory()
-    {
-        $category_id = $this->input->post('category_id');
+    {   
+        $this->form_validation->set_rules('category_id', 'Jenis Kategori', 'required');
+
 
         $category = [
             'user_id' => $this->ion_auth->get_user_id(),
-            'category_id' => $category_id
+            'category_id' => $this->input->post('category_id')
         ];
 
         $this->Penjual_model->update_category($category);
@@ -97,6 +98,14 @@ class Penjual extends CI_Controller
 
     public function register()
     {
+        $id_user = $this->ion_auth->get_user_id();
+
+        if ($this->ion_auth->in_group('penjual', $id_user)) {
+
+            redirect('penjual/index');
+        }
+
+
         $this->form_validation->set_rules('store_name', 'Nama Toko', 'required');
         $this->form_validation->set_rules('phone', 'Nomor Handphone', 'required');
 
@@ -104,8 +113,11 @@ class Penjual extends CI_Controller
             $this->load->view('penjual/register');
         } else {
 
-            $id_user = $this->ion_auth->get_user_id();
-
+            if(empty($id_user))
+                {
+                    redirect('pembeli/index');
+                }
+                
             $data = [
                 'store_name' => $this->input->post('store_name', TRUE),
                 'phone' => $this->input->post('phone', TRUE)
