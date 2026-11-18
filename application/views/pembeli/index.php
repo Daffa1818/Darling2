@@ -345,6 +345,7 @@
 								opacity: 1,
 								fillOpacity: 0.8
 							}).bindPopup(popupContent);
+							
 							penjualMarker.addLayer(sellerMarker);
 						})
 					}
